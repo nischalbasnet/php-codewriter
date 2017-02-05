@@ -1,0 +1,12 @@
+{
+    "name": "nbasnet/php-codewriter",
+    "description": "Helper classes to generate code for writing to a file",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Nischal Basnet",
+            "email": "nbasnet@outlook.com"
+        }
+    ],
+    "require": {}
+}
