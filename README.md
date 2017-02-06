@@ -1,6 +1,6 @@
 # php-codewriter
 
-######Generate code for writing to file easily using different components
+######Generate code for writing to file using different components
 
 ####  1 . Variable Component
 ```php
