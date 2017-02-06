@@ -18,15 +18,15 @@ use NBasnet\CodeWriter\ISyntaxGrammar;
 function generateCodeForWritingToFile()
 {
     $file_writer = FileWriter::create(ISyntaxGrammar::PHP);
-    $page        = CodePage::create('App\Http\Controllers\Project', [
-        'App\Http\Controllers\Project',
-        'App\Http\Controllers\Project',
+    $page        = CodePage::create('App\Controllers\Test', [
+        'App\Controllers\Test',
+        'App\Controllers\Test',
     ]);
 
-    $class = ClassComponent::create('ProjectController')
+    $class = ClassComponent::create('TestController')
         ->setExtends("Controller");
 
-    $variable = VariableComponent::create("nischal")->setValue("Is Name");
+    $variable = VariableComponent::create("var")->setValue("Is Name");
     $constant = VariableComponent::create("TEST")->setValue("VALUE 1")->makeConstant();
     $array    = ArrayComponent::create("what_is_this", TRUE)
         ->setValue([
