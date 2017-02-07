@@ -50,14 +50,12 @@ OUTPUT:
        */
       public function myFunction(array $my_array, $val)
       {
-           $what_is_this = [
+          $what_is_this = [
               'string' => 'is game',
               'number' => 2,
               'bool' => false,
           ];
-
-           $nischal = 'Is Name';
-
+          $nischal = 'Is Name';
       }
 ```
       
