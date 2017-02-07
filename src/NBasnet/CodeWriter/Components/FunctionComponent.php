@@ -11,10 +11,11 @@ use NBasnet\CodeWriter\IComponentWrite;
 class FunctionComponent extends BaseComponent
 {
     protected $function_name;
-    protected $parameters        = [];
-    protected $return_type       = '';
-    protected $exceptions_thrown = [];
-    protected $access_identifier = '';
+    protected $parameters           = [];
+    protected $return_type          = '';
+    protected $exceptions_thrown    = [];
+    protected $access_identifier    = '';
+    protected $function_description = '';
 
     /** @var array|IComponentWrite[] $function_body */
     protected $function_body = [];
@@ -95,14 +96,29 @@ class FunctionComponent extends BaseComponent
     }
 
     /**
+     * @param string $function_description
+     * @return $this
+     */
+    public function setFunctionDescription($function_description)
+    {
+        $this->function_description = $function_description;
+
+        return $this;
+    }
+
+    /**
      * write the function component
      */
     public function writeComponent()
     {
         $function_output = '';
 
-        if (!empty($this->parameters) || !empty($this->return_type) || !empty($this->exceptions_thrown)) {
+        if (!empty($this->function_description) || !empty($this->parameters) || !empty($this->return_type) || !empty($this->exceptions_thrown)) {
             $doc_string = [];
+
+            if (!empty($this->function_description)) {
+                $doc_string[] = $this->function_description;
+            }
 
             foreach ($this->parameters as $parameter) {
                 $doc_string[] = "@param $parameter";
@@ -140,9 +156,9 @@ class FunctionComponent extends BaseComponent
         foreach ($this->function_body as $component) {
             if ($component instanceof IComponentWrite) {
                 $component->setGrammar($this->grammar);
-                $function_output .= FileWriter::addLine($component->setIndent($this->indent + 1)
+                $function_output .= $component->setIndent($this->indent + 1)
                     ->setIndentSpace($this->indent_space)
-                    ->writeComponent(), 0, 0);
+                    ->writeComponent();
             }
         }
 

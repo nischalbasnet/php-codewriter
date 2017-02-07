@@ -8,6 +8,7 @@ use NBasnet\CodeWriter\Components\BaseComponent;
 use NBasnet\CodeWriter\Components\BlankComponent;
 use NBasnet\CodeWriter\Components\ClassComponent;
 use NBasnet\CodeWriter\Components\FunctionComponent;
+use NBasnet\CodeWriter\Components\GeneralComponent;
 use NBasnet\CodeWriter\Components\VariableComponent;
 use NBasnet\CodeWriter\FileWriter;
 use NBasnet\CodeWriter\ISyntaxGrammar;
@@ -36,11 +37,14 @@ function generateCodeForWritingToFile()
         ]);
 
     $function = FunctionComponent::create("myFunction")
+        ->setFunctionDescription('Return $val')
         ->setParameters(['array $my_array', '$val']);
 
     $function->addComponentToBody($array)
         ->setAccessIdentifier(BaseComponent::ACCESS_PUBLIC)
-        ->addComponentToBody($variable);
+        ->addComponentToBody($variable)
+        ->addComponentToBody(GeneralComponent::create()->addLine())
+        ->addComponentToBody(GeneralComponent::create('return $val;'));
 
     $class->addComponents($variable)
         ->addComponents($constant)

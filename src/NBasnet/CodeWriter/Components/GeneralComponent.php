@@ -11,6 +11,36 @@ use NBasnet\CodeWriter\IComponentWrite;
 class GeneralComponent extends BaseComponent
 {
     protected $components = [];
+    protected $content;
+    protected $addLine = false;
+
+    /**
+     * GeneralComponent constructor.
+     * @param $content
+     */
+    public function __construct($content = "")
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * @param string $content
+     * @return static
+     */
+    public static function create($content = "")
+    {
+        return new static($content);
+    }
+
+    /**
+     * @return $this
+     */
+    public function addLine()
+    {
+        $this->addLine = true;
+
+        return $this;
+    }
 
     /**
      * @param IComponentWrite $component
@@ -29,7 +59,10 @@ class GeneralComponent extends BaseComponent
      */
     public function writeComponent()
     {
-        $output = '';
+        $output = ($this->content || $this->addLine) ?
+            FileWriter::addLine($this->content, $this->indent, $this->indent_space) :
+            '';
+
         //create and add other components here
         foreach ($this->components as $component) {
             if ($component instanceof IComponentWrite) {
