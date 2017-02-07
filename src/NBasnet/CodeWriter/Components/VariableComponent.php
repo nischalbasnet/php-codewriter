@@ -98,17 +98,15 @@ class VariableComponent extends BaseComponent
      */
     public function generateVariableName()
     {
-        $variable_name = "";
+        $name_parts = [];
         if ($this->grammar->getProgram() === ISyntaxGrammar::PHP) {
-            if (!empty($this->variableAccess)) $variable_name = $this->variableAccess;
-            if ($this->static) $variable_name .= $this->grammar->getStatic();
-            if ($this->constant) $variable_name .= " {$this->grammar->constant()} ";
-            if (!$this->constant) $variable_name .= ' $';
-            $variable_name .= "{$this->variableName}";
+            if (!empty($this->variableAccess)) $name_parts[] = $this->variableAccess;
+            if ($this->static) $name_parts[] = $this->grammar->getStatic();
+            if ($this->constant) $name_parts[] = $this->grammar->constant();
+            $name_parts[] = ($this->constant) ? $this->variableName : '$' . $this->variableName;
         }
 
         //handle other languages here
-
-        return $variable_name;
+        return implode(" ", $name_parts);
     }
 }
