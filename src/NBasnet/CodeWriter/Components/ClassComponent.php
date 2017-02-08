@@ -98,13 +98,23 @@ class ClassComponent extends BaseComponent
     }
 
     /**
+     * @return $this
+     */
+    public function addBlankLine()
+    {
+        $this->addComponents(GeneralComponent::create()->addLine());
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function writeComponent()
     {
         //write the doc string
         $output_class = CommentComponent::create(CommentComponent::TYPE_MULTI_LINE)
-            ->setComment("CLASS {$this->className}")
+            ->setComment("Class {$this->className}")
             ->setIndent($this->indent)
             ->setIndentSpace($this->indent_space)
             ->writeComponent();
@@ -126,12 +136,12 @@ class ClassComponent extends BaseComponent
             }
         }
 
-        $output_class .= FileWriter::addLine(trim($class_name_output));
-        $output_class .= FileWriter::addLine($this->grammar->regionStartTag());
+        $output_class .= FileWriter::addLine(trim($class_name_output), $this->indent, $this->indent_space);
+        $output_class .= FileWriter::addLine($this->grammar->regionStartTag(), $this->indent, $this->indent_space);
 
         if ($this->grammar->getProgram() === ISyntaxGrammar::PHP) {
             foreach ($this->traits as $trait) {
-                $output_class .= FileWriter::addLine("{$this->grammar->traitUse()} $trait;");
+                $output_class .= FileWriter::addLine("{$this->grammar->traitUse()} $trait;", $this->indent + 1, $this->indent_space);
             }
         }
 
@@ -139,13 +149,13 @@ class ClassComponent extends BaseComponent
         foreach ($this->components as $component) {
             if ($component instanceof IComponentWrite) {
                 $component->setGrammar($this->grammar);
-                $output_class .= FileWriter::addLine($component->setIndent($this->indent + 1)
+                $output_class .= $component->setIndent($this->indent + 1)
                     ->setIndentSpace($this->indent_space)
-                    ->writeComponent(), 0, 0);
+                    ->writeComponent();
             }
         }
 
-        $output_class .= FileWriter::addLine($this->grammar->regionEndTag());
+        $output_class .= FileWriter::addLine($this->grammar->regionEndTag(), $this->indent, $this->indent_space);
 
         return $output_class;
     }

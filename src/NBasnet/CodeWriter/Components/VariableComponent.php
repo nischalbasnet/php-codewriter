@@ -13,10 +13,11 @@ class VariableComponent extends BaseComponent
     /** @var  ISyntaxGrammar $grammar */
     protected $grammar;
     protected $variableName;
-    protected $constant = FALSE;
-    protected $static   = FALSE;
-    protected $variableAccess;
+    protected $constant       = FALSE;
+    protected $static         = FALSE;
+    protected $access_identifier;
     protected $value;
+    protected $unquoted_value = FALSE;
 
     /**
      * VariableComponent constructor.
@@ -81,13 +82,35 @@ class VariableComponent extends BaseComponent
     }
 
     /**
+     * @param mixed $variableAccess
+     * @return $this
+     */
+    public function setAccessIdentifier($variableAccess)
+    {
+        $this->access_identifier = $variableAccess;
+
+        return $this;
+    }
+
+    /**
+     * dont quote the variable value
+     * @return $this
+     */
+    public function unQuoteValue()
+    {
+        $this->unquoted_value = TRUE;
+
+        return $this;
+    }
+
+    /**
      * Method to handle writing component
      * @return mixed
      */
     public function writeComponent()
     {
         return FileWriter::addLine(
-            sprintf("{$this->generateVariableName()} = %s;", FileWriter::quoteValue($this->value)),
+            sprintf("{$this->generateVariableName()} = %s;", $this->unquoted_value ? $this->value : FileWriter::quoteValue($this->value)),
             $this->indent,
             $this->indent_space
         );
@@ -100,7 +123,7 @@ class VariableComponent extends BaseComponent
     {
         $name_parts = [];
         if ($this->grammar->getProgram() === ISyntaxGrammar::PHP) {
-            if (!empty($this->variableAccess)) $name_parts[] = $this->variableAccess;
+            if (!empty($this->access_identifier)) $name_parts[] = $this->access_identifier;
             if ($this->static) $name_parts[] = $this->grammar->getStatic();
             if ($this->constant) $name_parts[] = $this->grammar->constant();
             $name_parts[] = ($this->constant) ? $this->variableName : '$' . $this->variableName;

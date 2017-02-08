@@ -67,10 +67,13 @@ class CommentComponent extends BaseComponent
 
     /**
      * @param mixed $start_tag
+     * @return $this
      */
     public function setStartTag($start_tag)
     {
         $this->start_tag = $start_tag;
+
+        return $this;
     }
 
     /**
@@ -80,6 +83,18 @@ class CommentComponent extends BaseComponent
     public function setComment($comment)
     {
         $this->comment = $comment;
+
+        return $this;
+    }
+
+    /**
+     * @param array $comments
+     * @return $this
+     */
+    public function setMultiLineComment(array $comments)
+    {
+        $this->comment_type = self::TYPE_MULTI_LINE;
+        $this->comment      = $comments;
 
         return $this;
     }

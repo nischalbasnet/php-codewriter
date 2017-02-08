@@ -9,14 +9,14 @@ class CodePage implements IComponentWrite
 {
     /** @var  ISyntaxGrammar $grammar */
     protected $grammar;
-    protected $namespace = "";
-    protected $imports = [];
+    protected $namespace  = "";
+    protected $imports    = [];
     protected $components = [];
 
     /**
      * CodePage constructor.
      * @param string $namespace
-     * @param array  $using
+     * @param array $using
      */
     protected function __construct($namespace = "", array $using = [])
     {
@@ -37,7 +37,7 @@ class CodePage implements IComponentWrite
 
     /**
      * @param string $namespace
-     * @param array  $using
+     * @param array $using
      * @return static
      */
     public static function create($namespace = "", array $using = [])
@@ -77,16 +77,16 @@ class CodePage implements IComponentWrite
         $page_output = "";
         if ($this->grammar->openingTag()) $page_output .= FileWriter::addLine($this->grammar->openingTag(), 0);
 
-        if (!empty($this->namespace)) $page_output .= FileWriter::addLine("{$this->grammar->getNameSpace()} {$this->namespace};");
+        if (!empty($this->namespace)) $page_output .= FileWriter::addLine("{$this->grammar->getNameSpace()} {$this->namespace};", 0) . FileWriter::addBlankLine();
 
         foreach ($this->imports as $import) {
-            $page_output .= FileWriter::addLine("{$this->grammar->import()} $import;");
+            $page_output .= FileWriter::addLine("{$this->grammar->import()} $import;", 0);
         }
 
         foreach ($this->components as $component) {
             if ($component instanceof IComponentWrite) {
                 $component->setGrammar($this->grammar);
-                $page_output .= FileWriter::addContent($component->writeComponent(), 2, 0);
+                $page_output .= $component->setIndent(0)->writeComponent();
             }
         }
 
