@@ -1,6 +1,7 @@
 <?php
 namespace NBasnet\CodeWriter\Components;
 
+use NBasnet\CodeWriter\BaseComponent;
 use NBasnet\CodeWriter\FileWriter;
 use NBasnet\CodeWriter\IComponentWrite;
 
@@ -12,8 +13,8 @@ class FunctionComponent extends BaseComponent
 {
     protected $function_name;
     protected $parameters           = [];
-    protected $return_type          = '';
     protected $exceptions_thrown    = [];
+    protected $return_type          = '';
     protected $access_identifier    = '';
     protected $function_description = '';
 

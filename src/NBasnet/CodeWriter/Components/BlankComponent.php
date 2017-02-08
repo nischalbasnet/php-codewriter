@@ -1,7 +1,7 @@
 <?php
 namespace NBasnet\CodeWriter\Components;
 
-
+use NBasnet\CodeWriter\BaseComponent;
 use NBasnet\CodeWriter\FileWriter;
 
 class BlankComponent extends BaseComponent

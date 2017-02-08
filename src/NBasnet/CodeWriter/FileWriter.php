@@ -5,22 +5,10 @@ namespace NBasnet\CodeWriter;
  * Class FileWriter
  * @package App\Services\File\Writer
  */
-class FileWriter implements IComponentWrite
+class FileWriter extends BaseComponent
 {
     protected $writerContents = [];
     protected $syntaxLanguage;
-    protected $syntaxGrammar;
-
-    public function setIndent($indent)
-    {
-        // TODO: Implement setIndent() method.
-    }
-
-    public function setIndentSpace($indent_space)
-    {
-        // TODO: Implement setIndentSpace() method.
-    }
-
 
     /**
      * FileWriter constructor.
@@ -29,9 +17,11 @@ class FileWriter implements IComponentWrite
     protected function __construct($syntaxLanguage)
     {
         $this->syntaxLanguage = $syntaxLanguage;
+        //set the indent for the children components
+        $this->indent = 0;
 
         if ($this->syntaxLanguage === ISyntaxGrammar::PHP) {
-            $this->syntaxGrammar = new PHPSyntaxGrammar();
+            $this->grammar = new PHPSyntaxGrammar();
         }
     }
 
@@ -47,19 +37,14 @@ class FileWriter implements IComponentWrite
     /**
      * Add component to the writer
      * @param IComponentWrite $component
+     * @return $this
      */
     public function addCodeComponent(IComponentWrite $component)
     {
-        $component->setGrammar($this->syntaxGrammar);
+        $component->setGrammar($this->grammar);
         $this->writerContents[] = $component;
-    }
 
-    /**
-     * @param ISyntaxGrammar $grammar
-     */
-    public function setGrammar($grammar)
-    {
-        $this->syntaxGrammar = $grammar;
+        return $this;
     }
 
     /**
@@ -71,8 +56,11 @@ class FileWriter implements IComponentWrite
 
         foreach ($this->writerContents as $content) {
             if ($content instanceof IComponentWrite) {
-                $content->setGrammar($this->syntaxGrammar);
-                $file_write_output .= $content->writeComponent();
+                $content->setGrammar($this->grammar);
+                $file_write_output .= $content
+                    ->setIndent($this->indent)
+                    ->setIndentSpace($this->indent_space)
+                    ->writeComponent();
             }
         }
 

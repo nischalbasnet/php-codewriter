@@ -1,6 +1,7 @@
 <?php
 namespace NBasnet\CodeWriter\Components;
 
+use NBasnet\CodeWriter\BaseComponent;
 use NBasnet\CodeWriter\FileWriter;
 use NBasnet\CodeWriter\ISyntaxGrammar;
 
@@ -13,10 +14,10 @@ class VariableComponent extends BaseComponent
     /** @var  ISyntaxGrammar $grammar */
     protected $grammar;
     protected $variableName;
-    protected $constant       = FALSE;
-    protected $static         = FALSE;
     protected $access_identifier;
     protected $value;
+    protected $constant       = FALSE;
+    protected $static         = FALSE;
     protected $unquoted_value = FALSE;
 
     /**

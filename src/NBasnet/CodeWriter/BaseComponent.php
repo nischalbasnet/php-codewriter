@@ -1,8 +1,5 @@
 <?php
-namespace NBasnet\CodeWriter\Components;
-
-use NBasnet\CodeWriter\IComponentWrite;
-use NBasnet\CodeWriter\ISyntaxGrammar;
+namespace NBasnet\CodeWriter;
 
 /**
  * Class BaseComponent

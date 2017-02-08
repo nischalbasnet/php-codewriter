@@ -1,6 +1,7 @@
 <?php
 namespace NBasnet\CodeWriter\Components;
 
+use NBasnet\CodeWriter\BaseComponent;
 use NBasnet\CodeWriter\FileWriter;
 use NBasnet\CodeWriter\IComponentWrite;
 
@@ -10,9 +11,9 @@ use NBasnet\CodeWriter\IComponentWrite;
  */
 class GeneralComponent extends BaseComponent
 {
-    protected $components = [];
     protected $content;
-    protected $addLine = false;
+    protected $components = [];
+    protected $addLine    = FALSE;
 
     /**
      * GeneralComponent constructor.
@@ -37,7 +38,7 @@ class GeneralComponent extends BaseComponent
      */
     public function addLine()
     {
-        $this->addLine = true;
+        $this->addLine = TRUE;
 
         return $this;
     }

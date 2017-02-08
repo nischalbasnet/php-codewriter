@@ -2,9 +2,9 @@
 require '../../vendor/autoload.php';
 
 //Test file writer
+use NBasnet\CodeWriter\BaseComponent;
 use NBasnet\CodeWriter\CodePage;
 use NBasnet\CodeWriter\Components\ArrayComponent;
-use NBasnet\CodeWriter\Components\BaseComponent;
 use NBasnet\CodeWriter\Components\BlankComponent;
 use NBasnet\CodeWriter\Components\ClassComponent;
 use NBasnet\CodeWriter\Components\FunctionComponent;
