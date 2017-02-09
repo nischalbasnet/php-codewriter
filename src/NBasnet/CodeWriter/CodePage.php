@@ -1,6 +1,8 @@
 <?php
 namespace NBasnet\CodeWriter;
 
+use NBasnet\CodeWriter\Components\GeneralComponent;
+
 /**
  * Class CodePage
  * @package App\Services\File\Writer
@@ -43,6 +45,16 @@ class CodePage extends BaseComponent
     {
         $component->setGrammar($this->grammar);
         $this->components[] = $component;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function addBlankLine()
+    {
+        $this->addComponents(GeneralComponent::createBlankLine());
 
         return $this;
     }

@@ -13,6 +13,11 @@ interface IComponentWrite
      */
     public function writeComponent();
 
+    /**
+     * Method to set syntax grammer for the component
+     * @param ISyntaxGrammar $grammar
+     * @return $this
+     */
     public function setGrammar($grammar);
 
     /**

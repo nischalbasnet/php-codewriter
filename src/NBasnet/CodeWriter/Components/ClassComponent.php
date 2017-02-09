@@ -103,7 +103,7 @@ class ClassComponent extends BaseComponent
      */
     public function addBlankLine()
     {
-        $this->addComponents(GeneralComponent::create()->addLine());
+        $this->addComponents(GeneralComponent::createBlankLine());
 
         return $this;
     }

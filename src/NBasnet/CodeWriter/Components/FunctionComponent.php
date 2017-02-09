@@ -112,7 +112,7 @@ class FunctionComponent extends BaseComponent
      */
     public function addBlankLine()
     {
-        $this->addComponentToBody(GeneralComponent::create()->addLine());
+        $this->addComponentToBody(GeneralComponent::createBlankLine());
 
         return $this;
     }

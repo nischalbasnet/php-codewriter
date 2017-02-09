@@ -1,6 +1,8 @@
 <?php
 namespace NBasnet\CodeWriter;
 
+use NBasnet\CodeWriter\Components\GeneralComponent;
+
 /**
  * Class FileWriter
  * @package App\Services\File\Writer
@@ -43,6 +45,16 @@ class FileWriter extends BaseComponent
     {
         $component->setGrammar($this->grammar);
         $this->writerContents[] = $component;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function addEmptyLine()
+    {
+        $this->addCodeComponent(GeneralComponent::createBlankLine());
 
         return $this;
     }

@@ -43,7 +43,7 @@ function generateCodeForWritingToFile()
     $function->addComponentToBody($array)
         ->setAccessIdentifier(BaseComponent::ACCESS_PUBLIC)
         ->addComponentToBody($variable)
-        ->addComponentToBody(GeneralComponent::create()->addLine())
+        ->addComponentToBody(GeneralComponent::createBlankLine())
         ->addComponentToBody(GeneralComponent::create('return $val;'));
 
     $class->addComponents($variable)
