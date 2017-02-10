@@ -114,7 +114,10 @@ class VariableComponent extends BaseComponent
             if (!empty($this->access_identifier)) $name_parts[] = $this->access_identifier;
             if ($this->static) $name_parts[] = $this->getGrammar()->getStatic();
             if ($this->constant) $name_parts[] = $this->getGrammar()->constant();
-            $name_parts[] = ($this->constant) ? $this->variable_name : '$' . $this->variable_name;
+            
+            $name_parts[] = ($this->constant) ?
+                $this->variable_name :
+                $this->getGrammar()->variableStartSymbol() . $this->variable_name;
         }
 
         //handle other languages here

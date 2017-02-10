@@ -44,5 +44,7 @@ interface ISyntaxGrammar
 
     public function arrayEndTag();
 
+    public function variableStartSymbol();
+
     public function getFunction();
 }

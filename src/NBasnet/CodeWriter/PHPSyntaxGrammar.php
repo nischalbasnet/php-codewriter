@@ -93,6 +93,11 @@ class PHPSyntaxGrammar implements ISyntaxGrammar
         return "]";
     }
 
+    public function variableStartSymbol()
+    {
+        return '$';
+    }
+
     public function getFunction()
     {
         return "function";
