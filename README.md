@@ -2,9 +2,14 @@
 
 ######Generate code for writing to file using different components
 
+##### Need to pass instance of CodeWriterSettings to the top most component using setSettings() [inherited from BaseComponent Class] before calling writeComponent() method
+```php
+      CodeWriterSettings::create(ISyntaxGrammar::PHP, $indent = 0)
+```
+
 ####  1 . Variable Component
 ```php
-      $variable = VariableComponent::create("var")->setValue("Is Name");
+      $variable = VariableComponent::create("var")->setValue("Is Name")->writeComponent();
       
 OUTPUT: 
       $var = 'Is Name';
@@ -12,7 +17,7 @@ OUTPUT:
 
 ######Constants:
 ```php
-      $constant = VariableComponent::create("TEST")->setValue("VALUE 1")->makeConstant();
+      $constant = VariableComponent::create("TEST")->setValue("VALUE 1")->makeConstant()->writeComponent();
       
 OUTPUT: 
       const TEST = 'VALUE 1';
@@ -25,7 +30,8 @@ OUTPUT:
             "string" => "is game",
             "number" => 2,
             "bool"   => FALSE,
-        ]);
+        ])
+        ->writeComponent();
         
 OUTPUT:   
       $what_is_this = [
@@ -38,10 +44,11 @@ OUTPUT:
 ####  3 . Function Component  
 ```php
       $function = FunctionComponent::create("myFunction")
-        ->setParameters(['array $my_array', '$val'])
-        ->addComponentToBody($array)
         ->setAccessIdentifier(BaseComponent::ACCESS_PUBLIC)
-        ->addComponentToBody($variable);
+        ->setParameters(['array $my_array', '$val'])
+        ->appendComponent($array)
+        ->appendComponent($variable)
+        ->writeComponent();
         
 OUTPUT:
       /**
@@ -62,12 +69,14 @@ OUTPUT:
 ####  4 . Class Component 
 ```php
       $class = ClassComponent::create('TestController')
-        ->setExtends("Controller");
-       
-      $class->addComponents($variable)
-        ->addComponents($constant)
-        ->addComponents($array)
-        ->addComponents($function);
+        ->setExtends("Controller")
+        ->appendComponent($variable)
+        ->appendComponent($constant)
+        ->appendBlankLine()
+        ->appendComponent($array)
+        ->appendBlankLine()
+        ->appendComponent($function)
+        ->writeComponent();
         
 OUTPUT:
       /**
@@ -76,7 +85,6 @@ OUTPUT:
       class TestController extends Controller
       {
            $var = 'Is Name';
-
            const TEST = 'VALUE 1';
 
            $what_is_this = [
@@ -91,15 +99,12 @@ OUTPUT:
            */
           public function myFunction(array $my_array, $val)
           {
-               $what_is_this = [
+              $what_is_this = [
                   'string' => 'is game',
                   'number' => 2,
                   'bool' => false,
               ];
-
-               $var = 'Is Name';
-
+              $var = 'Is Name';
           }
-
       }
 ```     
