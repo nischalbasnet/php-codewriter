@@ -17,6 +17,7 @@ class VariableComponent extends BaseComponent
     protected $constant       = FALSE;
     protected $static         = FALSE;
     protected $unquoted_value = FALSE;
+    protected $raw_value      = FALSE;
 
     /**
      * VariableComponent constructor.
@@ -92,13 +93,28 @@ class VariableComponent extends BaseComponent
     }
 
     /**
+     * Output the value in variable name without any formatting
+     * @return $this
+     */
+    public function rawOutput()
+    {
+        $this->raw_value = TRUE;
+
+        return $this;
+    }
+
+    /**
      * Method to handle writing component
      * @return mixed
      */
     public function writeComponent()
     {
+        $variable_output = $this->raw_value ?
+            ($this->value ? "$this->variable_name = $this->value" : $this->variable_name) . ";" :
+            sprintf("{$this->generateVariableName()} = %s;", $this->unquoted_value ? $this->value : FileWriter::quoteValue($this->value));
+
         return FileWriter::addLine(
-            sprintf("{$this->generateVariableName()} = %s;", $this->unquoted_value ? $this->value : FileWriter::quoteValue($this->value)),
+            $variable_output,
             $this->getIndent(),
             $this->getIndentSpace()
         );
@@ -114,7 +130,7 @@ class VariableComponent extends BaseComponent
             if (!empty($this->access_identifier)) $name_parts[] = $this->access_identifier;
             if ($this->static) $name_parts[] = $this->getGrammar()->getStatic();
             if ($this->constant) $name_parts[] = $this->getGrammar()->constant();
-            
+
             $name_parts[] = ($this->constant) ?
                 $this->variable_name :
                 $this->getGrammar()->variableStartSymbol() . $this->variable_name;

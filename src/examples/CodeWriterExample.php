@@ -39,6 +39,8 @@ function generateCodeForWritingToFile()
             "bool"   => FALSE,
         ]);
 
+    $static_variable = VariableComponent::create('static::PLAY')->setValue('$test')->rawOutput();
+
     $function = FunctionComponent::create("myFunction")
         ->setFunctionDescription('Return $val')
         ->setParameters(['array $my_array', '$val']);
@@ -47,6 +49,7 @@ function generateCodeForWritingToFile()
         ->setAccessIdentifier(BaseComponent::ACCESS_PUBLIC)
         ->appendComponent($array)
         ->appendComponent($variable)
+        ->appendComponent($static_variable)
         ->appendBlankLine()
         ->appendComponent(GeneralComponent::create('return $val;'));
 
