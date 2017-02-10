@@ -2,7 +2,7 @@
 
 ######Generate code for writing to file using different components
 
-##### Need to pass instance of CodeWriterSettings to the top most component using setSettings() [inherited from BaseComponent Class] before calling writeComponent() method
+##### Need to pass instance of ```CodeWriterSettings``` to the top most component using ```setSettings()``` [inherited from BaseComponent Class] before calling ```writeComponent()``` method. Exception ```SettingsNotSet``` is thrown if ```writeComponent()``` is called before settings is set.
 ```php
       CodeWriterSettings::create(ISyntaxGrammar::PHP, $indent = 0)
 ```
