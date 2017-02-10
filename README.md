@@ -80,7 +80,7 @@ OUTPUT:
         
 OUTPUT:
       /**
-       * CLASS TestController
+       * Class TestController
        */
       class TestController extends Controller
       {
