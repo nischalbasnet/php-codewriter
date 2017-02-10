@@ -72,19 +72,6 @@ class FunctionComponent extends BaseComponent
         return $this;
     }
 
-
-    /**
-     * @param IComponentWrite $component
-     * @return $this
-     */
-    public function addComponentToBody(IComponentWrite $component)
-    {
-        $component->setGrammar($this->grammar);
-        $this->function_body[] = $component;
-
-        return $this;
-    }
-
     /**
      * @param string $access_identifier
      * @return $this
@@ -108,11 +95,23 @@ class FunctionComponent extends BaseComponent
     }
 
     /**
+     * @param IComponentWrite $component
      * @return $this
      */
-    public function addBlankLine()
+    public function appendComponent(IComponentWrite $component)
     {
-        $this->addComponentToBody(GeneralComponent::createBlankLine());
+        $this->function_body[] = $component;
+
+        return $this;
+    }
+
+    /**
+     * @param int $blank_lines
+     * @return $this
+     */
+    public function appendBlankLine($blank_lines = 1)
+    {
+        $this->appendComponent(BlankComponent::create($blank_lines));
 
         return $this;
     }
@@ -146,13 +145,11 @@ class FunctionComponent extends BaseComponent
 
             $function_output .= CommentComponent::create(CommentComponent::TYPE_MULTI_LINE)
                 ->setComment($doc_string)
-                ->setGrammar($this->grammar)
-                ->setIndent($this->indent)
-                ->setIndentSpace($this->indent_space)
+                ->setSettings($this->settings)
                 ->writeComponent();
         }
 
-        $function_name = "{$this->access_identifier} {$this->grammar->getFunction()} $this->function_name(";
+        $function_name = "{$this->access_identifier} {$this->getGrammar()->getFunction()} $this->function_name(";
 
         foreach ($this->parameters as $parameter) {
             $function_name .= "$parameter, ";
@@ -160,20 +157,18 @@ class FunctionComponent extends BaseComponent
         $function_name = rtrim($function_name, ", ");
         $function_name .= ")";
 
-        $function_output .= FileWriter::addLine($function_name, $this->indent, $this->indent_space);
-        $function_output .= FileWriter::addLine($this->grammar->regionStartTag(), $this->indent, $this->indent_space);
+        $function_output .= FileWriter::addLine($function_name, $this->getIndent(), $this->getIndentSpace());
+        $function_output .= FileWriter::addLine($this->getGrammar()->regionStartTag(), $this->getIndent(), $this->getIndentSpace());
 
         //create and add other components here
         foreach ($this->function_body as $component) {
             if ($component instanceof IComponentWrite) {
-                $component->setGrammar($this->grammar);
-                $function_output .= $component->setIndent($this->indent + 1)
-                    ->setIndentSpace($this->indent_space)
-                    ->writeComponent();
+                $component->setSettings($this->settings, $this->getIndent() + 1);
+                $function_output .= $component->writeComponent();
             }
         }
 
-        $function_output .= FileWriter::addLine($this->grammar->regionEndTag(), $this->indent, $this->indent_space);
+        $function_output .= FileWriter::addLine($this->getGrammar()->regionEndTag(), $this->getIndent(), $this->getIndentSpace());
 
         return $function_output;
     }

@@ -11,9 +11,7 @@ use NBasnet\CodeWriter\ISyntaxGrammar;
  */
 class VariableComponent extends BaseComponent
 {
-    /** @var  ISyntaxGrammar $grammar */
-    protected $grammar;
-    protected $variableName;
+    protected $variable_name;
     protected $access_identifier;
     protected $value;
     protected $constant       = FALSE;
@@ -26,7 +24,7 @@ class VariableComponent extends BaseComponent
      */
     protected function __construct($variableName)
     {
-        $this->variableName = $variableName;
+        $this->variable_name = $variableName;
     }
 
     /**
@@ -36,17 +34,6 @@ class VariableComponent extends BaseComponent
     public static function create($variableName)
     {
         return new static($variableName);
-    }
-
-    /**
-     * @param ISyntaxGrammar $grammar
-     * @return $this
-     */
-    public function setGrammar($grammar)
-    {
-        $this->grammar = $grammar;
-
-        return $this;
     }
 
     /**
@@ -112,8 +99,8 @@ class VariableComponent extends BaseComponent
     {
         return FileWriter::addLine(
             sprintf("{$this->generateVariableName()} = %s;", $this->unquoted_value ? $this->value : FileWriter::quoteValue($this->value)),
-            $this->indent,
-            $this->indent_space
+            $this->getIndent(),
+            $this->getIndentSpace()
         );
     }
 
@@ -123,11 +110,11 @@ class VariableComponent extends BaseComponent
     public function generateVariableName()
     {
         $name_parts = [];
-        if ($this->grammar->getProgram() === ISyntaxGrammar::PHP) {
+        if ($this->getGrammar()->getProgram() === ISyntaxGrammar::PHP) {
             if (!empty($this->access_identifier)) $name_parts[] = $this->access_identifier;
-            if ($this->static) $name_parts[] = $this->grammar->getStatic();
-            if ($this->constant) $name_parts[] = $this->grammar->constant();
-            $name_parts[] = ($this->constant) ? $this->variableName : '$' . $this->variableName;
+            if ($this->static) $name_parts[] = $this->getGrammar()->getStatic();
+            if ($this->constant) $name_parts[] = $this->getGrammar()->constant();
+            $name_parts[] = ($this->constant) ? $this->variable_name : '$' . $this->variable_name;
         }
 
         //handle other languages here

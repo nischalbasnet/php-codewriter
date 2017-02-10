@@ -12,10 +12,8 @@ use NBasnet\CodeWriter\ISyntaxGrammar;
  */
 class ClassComponent extends BaseComponent
 {
-    /** @var  ISyntaxGrammar $grammar */
-    protected $grammar;
-    protected $abstractClass;
-    protected $className;
+    protected $abstract_class;
+    protected $class_name;
     protected $extends    = null;
     protected $interfaces = [];
     protected $traits     = [];
@@ -23,34 +21,23 @@ class ClassComponent extends BaseComponent
 
     /**
      * ClassComponent constructor.
-     * @param string $className
-     * @param  bool $abstractClass
+     * @param string $class_name
+     * @param  bool $abstract_class
      */
-    private function __construct($className, $abstractClass = FALSE)
+    private function __construct($class_name, $abstract_class = FALSE)
     {
-        $this->abstractClass = $abstractClass;
-        $this->className     = $className;
+        $this->abstract_class = $abstract_class;
+        $this->class_name     = $class_name;
     }
 
     /**
-     * @param string $className
-     * @param  bool $abstractClass
+     * @param string $class_name
+     * @param  bool $abstract_class
      * @return static
      */
-    public static function create($className, $abstractClass = FALSE)
+    public static function create($class_name, $abstract_class = FALSE)
     {
-        return new static($className, $abstractClass);
-    }
-
-    /**
-     * @param ISyntaxGrammar $grammar
-     * @return $this
-     */
-    public function setGrammar($grammar)
-    {
-        $this->grammar = $grammar;
-
-        return $this;
+        return new static($class_name, $abstract_class);
     }
 
     /**
@@ -90,20 +77,20 @@ class ClassComponent extends BaseComponent
      * @param IComponentWrite $component
      * @return $this
      */
-    public function addComponents(IComponentWrite $component)
+    public function appendComponent(IComponentWrite $component)
     {
-        $component->setGrammar($this->grammar);
         $this->components[] = $component;
 
         return $this;
     }
 
     /**
+     * @param int $blank_lines
      * @return $this
      */
-    public function addBlankLine()
+    public function appendBlankLine($blank_lines = 1)
     {
-        $this->addComponents(GeneralComponent::createBlankLine());
+        $this->appendComponent(BlankComponent::create($blank_lines));
 
         return $this;
     }
@@ -115,48 +102,45 @@ class ClassComponent extends BaseComponent
     {
         //write the doc string
         $output_class = CommentComponent::create(CommentComponent::TYPE_MULTI_LINE)
-            ->setComment("Class {$this->className}")
-            ->setIndent($this->indent)
-            ->setIndentSpace($this->indent_space)
+            ->setComment("Class {$this->class_name}")
+            ->setSettings($this->settings)
             ->writeComponent();
 
         $class_name_output = "";
-        if ($this->abstractClass) {
-            $class_name_output .= $this->grammar->getAbstract();
+        if ($this->abstract_class) {
+            $class_name_output .= $this->getGrammar()->getAbstract();
         }
 
-        $class_name_output .= " {$this->grammar->getClass()} {$this->className}";
+        $class_name_output .= " {$this->getGrammar()->getClass()} {$this->class_name}";
 
-        if (!empty($this->extends)) $class_name_output .= " {$this->grammar->getExtends()} {$this->extends}";
+        if (!empty($this->extends)) $class_name_output .= " {$this->getGrammar()->getExtends()} {$this->extends}";
 
         //check the current code to change it accordingly
         if (!empty($this->interfaces)) {
-            $class_name_output .= " {$this->grammar->implement()}";
+            $class_name_output .= " {$this->getGrammar()->implement()}";
             foreach ($this->interfaces as $implement) {
                 $class_name_output .= " $implement,";
             }
         }
 
-        $output_class .= FileWriter::addLine(trim($class_name_output), $this->indent, $this->indent_space);
-        $output_class .= FileWriter::addLine($this->grammar->regionStartTag(), $this->indent, $this->indent_space);
+        $output_class .= FileWriter::addLine(trim($class_name_output), $this->getIndent(), $this->getIndentSpace());
+        $output_class .= FileWriter::addLine($this->getGrammar()->regionStartTag(), $this->getIndent(), $this->getIndentSpace());
 
-        if ($this->grammar->getProgram() === ISyntaxGrammar::PHP) {
+        if ($this->getGrammar()->getProgram() === ISyntaxGrammar::PHP) {
             foreach ($this->traits as $trait) {
-                $output_class .= FileWriter::addLine("{$this->grammar->traitUse()} $trait;", $this->indent + 1, $this->indent_space);
+                $output_class .= FileWriter::addLine("{$this->getGrammar()->traitUse()} $trait;", $this->getIndent() + 1, $this->getIndentSpace());
             }
         }
 
         //create and add other components here
         foreach ($this->components as $component) {
             if ($component instanceof IComponentWrite) {
-                $component->setGrammar($this->grammar);
-                $output_class .= $component->setIndent($this->indent + 1)
-                    ->setIndentSpace($this->indent_space)
-                    ->writeComponent();
+                $component->setSettings($this->settings, $this->getIndent() + 1);
+                $output_class .= $component->writeComponent();
             }
         }
 
-        $output_class .= FileWriter::addLine($this->grammar->regionEndTag(), $this->indent, $this->indent_space);
+        $output_class .= FileWriter::addLine($this->getGrammar()->regionEndTag(), $this->getIndent(), $this->getIndentSpace());
 
         return $output_class;
     }

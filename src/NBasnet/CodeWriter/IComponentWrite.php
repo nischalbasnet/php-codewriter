@@ -14,21 +14,10 @@ interface IComponentWrite
     public function writeComponent();
 
     /**
-     * Method to set syntax grammer for the component
-     * @param ISyntaxGrammar $grammar
-     * @return $this
+     * @param CodeWriterSettings $code_writer_settings
+     * @param int $component_indent
+     * @return mixed
      */
-    public function setGrammar($grammar);
+    public function setSettings(CodeWriterSettings $code_writer_settings, $component_indent = -1);
 
-    /**
-     * @param int $indent
-     * @return $this
-     */
-    public function setIndent($indent);
-
-    /**
-     * @param int $indent_space
-     * @return $this
-     */
-    public function setIndentSpace($indent_space);
 }

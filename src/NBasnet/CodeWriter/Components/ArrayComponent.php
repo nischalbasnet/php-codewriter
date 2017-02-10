@@ -50,9 +50,9 @@ class ArrayComponent extends VariableComponent
     public function writeComponent()
     {
         $variable_string = FileWriter::addLine(
-            "{$this->generateVariableName()} = {$this->grammar->arrayStartTag()}",
-            $this->indent,
-            $this->indent_space
+            "{$this->generateVariableName()} = {$this->getGrammar()->arrayStartTag()}",
+            $this->getIndent(),
+            $this->getIndentSpace()
         );
 
         foreach ($this->value as $key => $value) {
@@ -61,14 +61,14 @@ class ArrayComponent extends VariableComponent
                 sprintf("%s,", FileWriter::quoteValue($value));
 
             $variable_string .= FileWriter::addLine($array_line,
-                $this->indent + 1,
-                $this->indent_space
+                $this->getIndent() + 1,
+                $this->getIndentSpace()
             );
         }
 
-        $variable_string .= FileWriter::addLine("{$this->grammar->arrayEndTag()};",
-            $this->indent,
-            $this->indent_space
+        $variable_string .= FileWriter::addLine("{$this->getGrammar()->arrayEndTag()};",
+            $this->getIndent(),
+            $this->getIndentSpace()
         );
 
         return $variable_string;

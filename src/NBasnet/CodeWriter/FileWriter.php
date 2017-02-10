@@ -1,7 +1,7 @@
 <?php
 namespace NBasnet\CodeWriter;
 
-use NBasnet\CodeWriter\Components\GeneralComponent;
+use NBasnet\CodeWriter\Components\BlankComponent;
 
 /**
  * Class FileWriter
@@ -9,52 +9,45 @@ use NBasnet\CodeWriter\Components\GeneralComponent;
  */
 class FileWriter extends BaseComponent
 {
-    protected $writerContents = [];
-    protected $syntaxLanguage;
+    protected $writer_contents = [];
+    protected $syntax_language;
 
     /**
-     * FileWriter constructor.
-     * @param $syntaxLanguage
+     * FileWriter constructor
+     * @param CodeWriterSettings $settings
      */
-    protected function __construct($syntaxLanguage)
+    protected function __construct(CodeWriterSettings $settings)
     {
-        $this->syntaxLanguage = $syntaxLanguage;
-        //set the indent for the children components
-        $this->indent = 0;
-
-        if ($this->syntaxLanguage === ISyntaxGrammar::PHP) {
-            $this->grammar = new PHPSyntaxGrammar();
-        }
+        $this->settings = $settings;
     }
 
     /**
-     * @param $syntaxLanguage
+     * @param CodeWriterSettings $settings
      * @return static
      */
-    public static function create($syntaxLanguage)
+    public static function create(CodeWriterSettings $settings)
     {
-        return new static($syntaxLanguage);
+        return new static($settings);
     }
 
     /**
-     * Add component to the writer
      * @param IComponentWrite $component
      * @return $this
      */
-    public function addCodeComponent(IComponentWrite $component)
+    public function appendComponent(IComponentWrite $component)
     {
-        $component->setGrammar($this->grammar);
-        $this->writerContents[] = $component;
+        $this->writer_contents[] = $component;
 
         return $this;
     }
 
     /**
+     * @param int $blank_lines
      * @return $this
      */
-    public function addEmptyLine()
+    public function appendBlankLine($blank_lines = 1)
     {
-        $this->addCodeComponent(GeneralComponent::createBlankLine());
+        $this->appendComponent(BlankComponent::create($blank_lines));
 
         return $this;
     }
@@ -66,13 +59,10 @@ class FileWriter extends BaseComponent
     {
         $file_write_output = "";
 
-        foreach ($this->writerContents as $content) {
+        foreach ($this->writer_contents as $content) {
             if ($content instanceof IComponentWrite) {
-                $content->setGrammar($this->grammar);
-                $file_write_output .= $content
-                    ->setIndent($this->indent)
-                    ->setIndentSpace($this->indent_space)
-                    ->writeComponent();
+                $content->setSettings($this->settings);
+                $file_write_output .= $content->writeComponent();
             }
         }
 

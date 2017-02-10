@@ -3,7 +3,6 @@ namespace NBasnet\CodeWriter\Components;
 
 use NBasnet\CodeWriter\BaseComponent;
 use NBasnet\CodeWriter\FileWriter;
-use NBasnet\CodeWriter\ISyntaxGrammar;
 
 /**
  * Class CommentComponent
@@ -14,11 +13,9 @@ class CommentComponent extends BaseComponent
     const TYPE_SINGLE_LINE = "single_line_comment";
     const TYPE_MULTI_LINE = "multi_line_comment";
 
-    /** @var  ISyntaxGrammar $grammar */
-    protected $grammar;
-    private   $start_tag;
-    private   $comment_type;
-    private   $comment;
+    private $start_tag;
+    private $comment_type;
+    private $comment;
 
     /**
      * CommentComponent constructor.
@@ -53,17 +50,6 @@ class CommentComponent extends BaseComponent
                 $this->start_tag = "/**";
                 break;
         }
-    }
-
-    /**
-     * @param ISyntaxGrammar $grammar
-     * @return $this
-     */
-    public function setGrammar($grammar)
-    {
-        $this->grammar = $grammar;
-
-        return $this;
     }
 
     /**
@@ -124,7 +110,7 @@ class CommentComponent extends BaseComponent
     private function writeSingleLineComment()
     {
         //write the doc string
-        return FileWriter::addLine("//{$this->comment}", $this->indent, $this->indent_space);
+        return FileWriter::addLine("//{$this->comment}", $this->getIndent(), $this->getIndentSpace());
     }
 
     /**
@@ -132,19 +118,19 @@ class CommentComponent extends BaseComponent
      */
     private function writeMultiLineComponent()
     {
-        $comment_output = FileWriter::addLine($this->start_tag, $this->indent, $this->indent_space);
+        $comment_output = FileWriter::addLine($this->start_tag, $this->getIndent(), $this->getIndentSpace());
 
         if (is_array($this->comment)) {
             foreach ($this->comment as $cmt) {
-                $comment_output .= FileWriter::addLine(" * {$cmt}", $this->indent, $this->indent_space);
+                $comment_output .= FileWriter::addLine(" * {$cmt}", $this->getIndent(), $this->getIndentSpace());
             }
 
         }
         else {
-            $comment_output .= FileWriter::addLine(" * {$this->comment}", $this->indent, $this->indent_space);
+            $comment_output .= FileWriter::addLine(" * {$this->comment}", $this->getIndent(), $this->getIndentSpace());
         }
 
-        $comment_output .= FileWriter::addLine(" */", $this->indent, $this->indent_space);
+        $comment_output .= FileWriter::addLine(" */", $this->getIndent(), $this->getIndentSpace());
 
         return $comment_output;
     }

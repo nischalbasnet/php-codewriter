@@ -1,7 +1,7 @@
 <?php
 namespace NBasnet\CodeWriter;
 
-use NBasnet\CodeWriter\Components\GeneralComponent;
+use NBasnet\CodeWriter\Components\BlankComponent;
 
 /**
  * Class CodePage
@@ -22,10 +22,7 @@ class CodePage extends BaseComponent
     {
         $this->namespace = $namespace;
         $this->imports   = $using;
-        //set the indent for the children components
-        $this->indent = 0;
     }
-
 
     /**
      * @param string $namespace
@@ -41,20 +38,20 @@ class CodePage extends BaseComponent
      * @param IComponentWrite $component
      * @return $this
      */
-    public function addComponents(IComponentWrite $component)
+    public function appendComponent(IComponentWrite $component)
     {
-        $component->setGrammar($this->grammar);
         $this->components[] = $component;
 
         return $this;
     }
 
     /**
+     * @param int $blank_lines
      * @return $this
      */
-    public function addBlankLine()
+    public function appendBlankLine($blank_lines = 1)
     {
-        $this->addComponents(GeneralComponent::createBlankLine());
+        $this->appendComponent(BlankComponent::create($blank_lines));
 
         return $this;
     }
@@ -66,25 +63,22 @@ class CodePage extends BaseComponent
     public function writeComponent()
     {
         $page_output = "";
-        if ($this->grammar->openingTag()) $page_output .= FileWriter::addLine($this->grammar->openingTag(), $this->indent, $this->indent_space);
+        if ($this->getGrammar()->openingTag()) $page_output .= FileWriter::addLine($this->getGrammar()->openingTag(), $this->getIndent(), $this->getIndentSpace());
 
-        if (!empty($this->namespace)) $page_output .= FileWriter::addLine("{$this->grammar->getNameSpace()} {$this->namespace};", $this->indent, $this->indent_space) . FileWriter::addBlankLine();
+        if (!empty($this->namespace)) $page_output .= FileWriter::addLine("{$this->getGrammar()->getNameSpace()} {$this->namespace};", $this->getIndent(), $this->getIndentSpace()) . FileWriter::addBlankLine();
 
         foreach ($this->imports as $import) {
-            $page_output .= FileWriter::addLine("{$this->grammar->import()} $import;", $this->indent, $this->indent_space);
+            $page_output .= FileWriter::addLine("{$this->getGrammar()->import()} $import;", $this->getIndent(), $this->getIndentSpace());
         }
 
         foreach ($this->components as $component) {
             if ($component instanceof IComponentWrite) {
-                $component->setGrammar($this->grammar);
-                $page_output .= $component
-                    ->setIndent($this->indent)
-                    ->setIndentSpace($this->indent_space)
-                    ->writeComponent();
+                $component->setSettings($this->settings);
+                $page_output .= $component->writeComponent();
             }
         }
 
-        if ($this->grammar->closingTag()) $page_output .= FileWriter::addLine($this->grammar->closingTag(), $this->indent, $this->indent_space);
+        if ($this->getGrammar()->closingTag()) $page_output .= FileWriter::addLine($this->getGrammar()->closingTag(), $this->getIndent(), $this->getIndentSpace());
 
         return $page_output;
     }

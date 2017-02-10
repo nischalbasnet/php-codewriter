@@ -4,6 +4,7 @@ require '../../vendor/autoload.php';
 //Test file writer
 use NBasnet\CodeWriter\BaseComponent;
 use NBasnet\CodeWriter\CodePage;
+use NBasnet\CodeWriter\CodeWriterSettings;
 use NBasnet\CodeWriter\Components\ArrayComponent;
 use NBasnet\CodeWriter\Components\BlankComponent;
 use NBasnet\CodeWriter\Components\ClassComponent;
@@ -18,7 +19,9 @@ use NBasnet\CodeWriter\ISyntaxGrammar;
  */
 function generateCodeForWritingToFile()
 {
-    $file_writer = FileWriter::create(ISyntaxGrammar::PHP);
+    $code_writer_settings = CodeWriterSettings::create(ISyntaxGrammar::PHP, $indent = 0);
+
+    $file_writer = FileWriter::create($code_writer_settings);
     $page        = CodePage::create('App\Controllers\Test', [
         'App\Controllers\Test',
         'App\Controllers\Test',
@@ -40,21 +43,24 @@ function generateCodeForWritingToFile()
         ->setFunctionDescription('Return $val')
         ->setParameters(['array $my_array', '$val']);
 
-    $function->addComponentToBody($array)
+    $function
         ->setAccessIdentifier(BaseComponent::ACCESS_PUBLIC)
-        ->addComponentToBody($variable)
-        ->addComponentToBody(GeneralComponent::createBlankLine())
-        ->addComponentToBody(GeneralComponent::create('return $val;'));
+        ->appendComponent($array)
+        ->appendComponent($variable)
+        ->appendBlankLine()
+        ->appendComponent(GeneralComponent::create('return $val;'));
 
-    $class->addComponents($variable)
-        ->addComponents($constant)
-        ->addComponents($array)
-        ->addComponents($function);
+    $class->appendComponent($variable)
+        ->appendComponent($constant)
+        ->appendBlankLine()
+        ->appendComponent($array)
+        ->appendBlankLine()
+        ->appendComponent($function);
 
-    $page->addComponents(BlankComponent::create());
+    $page->appendComponent(BlankComponent::create());
 
-    $page->addComponents($class);
-    $file_writer->addCodeComponent($page);
+    $page->appendComponent($class);
+    $file_writer->appendComponent($page);
 
     return $file_writer->writeComponent();
 }

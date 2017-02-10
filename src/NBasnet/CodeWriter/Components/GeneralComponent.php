@@ -13,7 +13,7 @@ class GeneralComponent extends BaseComponent
 {
     protected $content;
     protected $components   = [];
-    protected $addLineBreak = FALSE;
+    protected $addLine_break = FALSE;
 
     /**
      * GeneralComponent constructor.
@@ -47,7 +47,7 @@ class GeneralComponent extends BaseComponent
      */
     public function addLineBreak()
     {
-        $this->addLineBreak = TRUE;
+        $this->addLine_break = TRUE;
 
         return $this;
     }
@@ -58,7 +58,7 @@ class GeneralComponent extends BaseComponent
      */
     public function addComponent(IComponentWrite $component)
     {
-        $component->setGrammar($this->grammar);
+        $component->setSettings($this->settings);
         $this->components[] = $component;
 
         return $this;
@@ -70,18 +70,18 @@ class GeneralComponent extends BaseComponent
     public function writeComponent()
     {
         if (!empty($this->content)) {
-            $output = FileWriter::addLine($this->content, $this->indent, $this->indent_space);
+            $output = FileWriter::addLine($this->content, $this->getIndent(), $this->getIndentSpace());
         }
         else {
-            $output = $this->addLineBreak ?
-                FileWriter::addLine('', 0) :
+            $output = $this->addLine_break ?
+                FileWriter::addLine('', $this->getBlankIndent()) :
                 '';
         }
 
         //create and add other components here
         foreach ($this->components as $component) {
             if ($component instanceof IComponentWrite) {
-                $component->setGrammar($this->grammar);
+                $component->setSettings($this->settings);
                 $output .= FileWriter::addLine($component->writeComponent());
             }
         }

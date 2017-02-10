@@ -10,43 +10,60 @@ abstract class BaseComponent implements IComponentWrite
     const ACCESS_PUBLIC = "public";
     const ACCESS_PRIVATE = "private";
 
-    /** @var  ISyntaxGrammar $grammar */
-    protected $grammar;
-
-    protected $indent       = 1;
-    protected $indent_space = 4;
+    /** @var  CodeWriterSettings $settings */
+    protected $settings;
 
     /**
-     * @param ISyntaxGrammar $grammar
+     * Set the settings for the component
+     * @param CodeWriterSettings $code_writer_settings
+     * @param int $component_indent
      * @return $this
      */
-    public function setGrammar($grammar)
+    public function setSettings(CodeWriterSettings $code_writer_settings, $component_indent = -1)
     {
-        $this->grammar = $grammar;
+        $this->settings = $code_writer_settings->replicate($component_indent);
 
         return $this;
     }
 
     /**
-     * @param int $indent
-     * @return $this
+     * @return ISyntaxGrammar
      */
-    public function setIndent($indent)
+    public function getGrammar()
     {
-        $this->indent = $indent;
-
-        return $this;
+        return $this->settings->getSyntaxGrammar();
     }
 
     /**
-     * @param int $indent_space
-     * @return $this
+     * @return int
      */
-    public function setIndentSpace($indent_space)
+    public function getIndent()
     {
-        $this->indent_space = $indent_space;
-
-        return $this;
+        return $this->settings->getIndent();
     }
 
+    /**
+     * @return int
+     */
+    public function getIndentSpace()
+    {
+        return $this->settings->getIndentSpace();
+    }
+
+    /**
+     * @return int
+     */
+    public function getBlankIndent()
+    {
+        return $this->settings->getBlankIndent();
+    }
+
+    /**
+     * For debug purpose
+     * @param $var
+     */
+    public static function dd($var)
+    {
+        die(var_dump($var));
+    }
 }
