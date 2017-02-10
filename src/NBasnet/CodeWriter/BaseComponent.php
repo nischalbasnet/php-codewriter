@@ -31,6 +31,8 @@ abstract class BaseComponent implements IComponentWrite
      */
     public function getGrammar()
     {
+        $this->isSettingsSet();
+
         return $this->settings->getSyntaxGrammar();
     }
 
@@ -39,6 +41,8 @@ abstract class BaseComponent implements IComponentWrite
      */
     public function getIndent()
     {
+        $this->isSettingsSet();
+
         return $this->settings->getIndent();
     }
 
@@ -47,6 +51,8 @@ abstract class BaseComponent implements IComponentWrite
      */
     public function getIndentSpace()
     {
+        $this->isSettingsSet();
+
         return $this->settings->getIndentSpace();
     }
 
@@ -55,7 +61,27 @@ abstract class BaseComponent implements IComponentWrite
      */
     public function getBlankIndent()
     {
+        $this->isSettingsSet();
+
         return $this->settings->getBlankIndent();
+    }
+
+    /**
+     * @param bool $throw_exception
+     * @return bool
+     * @throws SettingsNotSet
+     */
+    public function isSettingsSet($throw_exception = TRUE)
+    {
+        if (!($this->settings instanceof CodeWriterSettings)) {
+            if ($throw_exception) {
+                throw new SettingsNotSet(sprintf("settings property not set in %s, use setSettings() method to set", static::class));
+            }
+
+            return FALSE;
+        }
+
+        return TRUE;
     }
 
     /**
