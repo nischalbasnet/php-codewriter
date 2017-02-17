@@ -20,6 +20,8 @@ class ArrayComponent extends VariableComponent
     {
         parent::__construct($variableName);
         $this->associativeArray = $associativeArray;
+
+        $this->type = "array";
     }
 
     /**
@@ -34,9 +36,10 @@ class ArrayComponent extends VariableComponent
 
     /**
      * @param array $value
+     * @param string $type
      * @return $this
      */
-    public function setValue($value)
+    public function setValue($value, $type = '')
     {
         $this->value = $value;
 

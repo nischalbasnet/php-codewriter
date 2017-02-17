@@ -14,6 +14,7 @@ class VariableComponent extends BaseComponent
     protected $variable_name;
     protected $access_identifier;
     protected $value;
+    protected $type           = '';
     protected $constant       = FALSE;
     protected $static         = FALSE;
     protected $unquoted_value = FALSE;
@@ -61,11 +62,16 @@ class VariableComponent extends BaseComponent
 
     /**
      * @param mixed $value
+     * @param string $type
      * @return $this
      */
-    public function setValue($value)
+    public function setValue($value, $type = '')
     {
         $this->value = $value;
+
+        if (!empty($type)) {
+            $this->type = $type;
+        }
 
         return $this;
     }
@@ -104,6 +110,51 @@ class VariableComponent extends BaseComponent
     }
 
     /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->unquoted_value ? $this->value : FileWriter::quoteValue($this->value);
+    }
+
+    /**
+     * Check if value is present
+     * @return bool
+     */
+    public function hasValue()
+    {
+        return !empty($this->value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getVariableName()
+    {
+        return ($this->raw_value || $this->constant) ?
+            $this->variable_name :
+            $this->getGrammar()->variableStartSymbol() . $this->variable_name;
+    }
+
+    /**
+     * @param bool $force_type_return
+     * @return string
+     */
+    public function getNameWithType($force_type_return = FALSE)
+    {
+        if (($this->type && (
+                    (in_array($this->type, static::PRIMITIVE_TYPES) && $this->settings->typeHintPrimitive()) || !in_array($this->type, static::PRIMITIVE_TYPES))
+            ) ||
+            ($this->type && $force_type_return)
+        ) {
+            $name[] = $this->type;
+        }
+        $name[] = $this->getVariableName();
+
+        return (count($name) > 1) ? implode(" ", $name) : $name[0];
+    }
+
+    /**
      * Method to handle writing component
      * @return mixed
      */
@@ -131,9 +182,7 @@ class VariableComponent extends BaseComponent
             if ($this->static) $name_parts[] = $this->getGrammar()->getStatic();
             if ($this->constant) $name_parts[] = $this->getGrammar()->constant();
 
-            $name_parts[] = ($this->constant) ?
-                $this->variable_name :
-                $this->getGrammar()->variableStartSymbol() . $this->variable_name;
+            $name_parts[] = $this->getVariableName();
         }
 
         //handle other languages here

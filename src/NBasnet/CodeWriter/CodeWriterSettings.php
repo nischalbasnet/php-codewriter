@@ -10,9 +10,10 @@ class CodeWriterSettings
     /** @var  ISyntaxGrammar $syntax_grammar */
     private $syntax_grammar;
     private $syntax_language;
-    private $indent       = 1;
-    private $indent_space = 4;
-    private $blank_indent = 0;
+    private $indent              = 1;
+    private $indent_space        = 4;
+    private $blank_indent        = 0;
+    private $type_hint_primitive = FALSE;
 
     /**
      * CodeWriterSettings constructor.
@@ -122,6 +123,25 @@ class CodeWriterSettings
     public function setSyntaxLanguage($syntax_language)
     {
         $this->syntax_language = $syntax_language;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function typeHintPrimitive()
+    {
+        return $this->type_hint_primitive;
+    }
+
+    /**
+     * @param bool $type_hint_primitive
+     * @return $this
+     */
+    public function setTypeHintPrimitive($type_hint_primitive)
+    {
+        $this->type_hint_primitive = $type_hint_primitive;
 
         return $this;
     }

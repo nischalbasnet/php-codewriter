@@ -12,6 +12,7 @@ use NBasnet\CodeWriter\ISyntaxGrammar;
  */
 class ClassComponent extends BaseComponent
 {
+    protected $namespace  = '';
     protected $abstract_class;
     protected $class_name;
     protected $extends    = null;
@@ -74,6 +75,18 @@ class ClassComponent extends BaseComponent
     }
 
     /**
+     * @param string $namespace
+     * @return $this
+     */
+    public function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
+
+        return $this;
+    }
+
+
+    /**
      * @param IComponentWrite $component
      * @return $this
      */
@@ -100,9 +113,13 @@ class ClassComponent extends BaseComponent
      */
     public function writeComponent()
     {
+        $class_doc_string[] = "Class {$this->class_name}";
+        if (!empty($this->namespace)) {
+            $class_doc_string[] = "@package {$this->namespace}";
+        }
         //write the doc string
-        $output_class = CommentComponent::create(CommentComponent::TYPE_MULTI_LINE)
-            ->setComment("Class {$this->class_name}")
+        $output_class = CommentComponent::create()
+            ->setMultiLineComment($class_doc_string)
             ->setSettings($this->settings)
             ->writeComponent();
 

@@ -30,7 +30,7 @@ function generateCodeForWritingToFile()
     $class = ClassComponent::create('TestController')
         ->setExtends("Controller");
 
-    $variable = VariableComponent::create("var")->setValue("Is Name");
+    $variable = VariableComponent::create("var")->setValue("Is Name", "string");
     $constant = VariableComponent::create("TEST")->setValue("VALUE 1")->makeConstant();
     $array    = ArrayComponent::create("what_is_this", TRUE)
         ->setValue([
@@ -41,11 +41,12 @@ function generateCodeForWritingToFile()
 
     $static_variable = VariableComponent::create('static::PLAY')->setValue('$test')->rawOutput();
 
-    $function = FunctionComponent::create("myFunction")
-        ->setFunctionDescription('Return $val')
-        ->setParameters(['array $my_array', '$val']);
+    $function_parameters[] = $variable;
+    $function_parameters[] = ArrayComponent::create("my_array");
 
-    $function
+    $function = FunctionComponent::create("myFunction")
+        ->setFunctionDescription('Returns value for $val')
+        ->setParameters($function_parameters)
         ->setAccessIdentifier(BaseComponent::ACCESS_PUBLIC)
         ->appendComponent($array)
         ->appendComponent($variable)

@@ -12,6 +12,7 @@ use NBasnet\CodeWriter\IComponentWrite;
 class FunctionComponent extends BaseComponent
 {
     protected $function_name;
+    /** @var VariableComponent[] $parameters */
     protected $parameters           = [];
     protected $exceptions_thrown    = [];
     protected $return_type          = '';
@@ -40,7 +41,7 @@ class FunctionComponent extends BaseComponent
     }
 
     /**
-     * @param array $parameters
+     * @param VariableComponent[] $parameters
      * @return $this
      */
     public function setParameters(array $parameters)
@@ -131,13 +132,13 @@ class FunctionComponent extends BaseComponent
             }
 
             foreach ($this->parameters as $parameter) {
-                $doc_string[] = "@param $parameter";
+                $parameter->setSettings($this->settings);
+                $doc_string[] = "@param {$parameter->getNameWithType($force_type = TRUE)}";
             }
 
             if (!empty($this->return_type)) {
                 $doc_string[] = "@return {$this->return_type}";
             }
-
 
             foreach ($this->exceptions_thrown as $exception) {
                 $doc_string[] = "@throws $exception";
@@ -151,10 +152,13 @@ class FunctionComponent extends BaseComponent
 
         $function_name = "{$this->access_identifier} {$this->getGrammar()->getFunction()} $this->function_name(";
 
-        foreach ($this->parameters as $parameter) {
-            $function_name .= "$parameter, ";
+        $last_parameter_key = count($this->parameters) - 1;
+        foreach ($this->parameters as $key => $parameter) {
+            $function_name .= $parameter->getNameWithType();
+            $function_name .= $parameter->hasValue() ? " = {$parameter->getValue()}" : "";
+            $function_name .= ($last_parameter_key !== $key) ? ", " : "";
         }
-        $function_name = rtrim($function_name, ", ");
+
         $function_name .= ")";
 
         $function_output .= FileWriter::addLine($function_name, $this->getIndent(), $this->getIndentSpace());

@@ -10,6 +10,16 @@ abstract class BaseComponent implements IComponentWrite
     const ACCESS_PUBLIC = "public";
     const ACCESS_PRIVATE = "private";
 
+    const PRIMITIVE_TYPES = [
+        'int',
+        'integer',
+        'string',
+        'bool',
+        'boolean',
+        'float',
+        'decimal'
+    ];
+
     /** @var  CodeWriterSettings $settings */
     protected $settings;
 
