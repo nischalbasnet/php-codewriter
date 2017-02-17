@@ -9,7 +9,7 @@
 
 ####  1 . Variable Component
 ```php
-      $variable = VariableComponent::create("var")->setValue("Is Name")->writeComponent();
+      $variable = VariableComponent::create("var")->setValue("Is Name", "string")->writeComponent();
       
 OUTPUT: 
       $var = 'Is Name';
@@ -45,7 +45,7 @@ OUTPUT:
 ```php
       $function = FunctionComponent::create("myFunction")
         ->setAccessIdentifier(BaseComponent::ACCESS_PUBLIC)
-        ->setParameters(['array $my_array', '$val'])
+        ->setParameters([ArrayComponent::create("my_array"), $variable])
         ->appendComponent($array)
         ->appendComponent($variable)
         ->writeComponent();
@@ -53,9 +53,9 @@ OUTPUT:
 OUTPUT:
       /**
        * @param array $my_array
-       * @param $val
+       * @param string $val
        */
-      public function myFunction(array $my_array, $val)
+      public function myFunction(array $my_array, $val = 'Is Name')
       {
           $what_is_this = [
               'string' => 'is game',
@@ -91,20 +91,20 @@ OUTPUT:
               'string' => 'is game',
               'number' => 2,
               'bool' => false,
-          ];
+           ];
 
-          /**
-           * @param array $my_array
-           * @param $val
-           */
-          public function myFunction(array $my_array, $val)
-          {
-              $what_is_this = [
-                  'string' => 'is game',
-                  'number' => 2,
-                  'bool' => false,
-              ];
-              $var = 'Is Name';
-          }
+           /**
+            * @param array $my_array
+            * @param string $val
+            */
+           public function myFunction(array $my_array, $val = 'Is Name')
+           {
+               $what_is_this = [
+                   'string' => 'is game',
+                   'number' => 2,
+                   'bool' => false,
+               ];
+               $nischal = 'Is Name';
+           }
       }
 ```     
