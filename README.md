@@ -15,7 +15,7 @@ OUTPUT:
       $var = 'Is Name';
 ```     
 
-######Constants:
+###### Constants:
 ```php
       $constant = VariableComponent::create("TEST")->setValue("VALUE 1")->makeConstant()->writeComponent();
       
